@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/app_provider.dart';
+import 'providers/providers.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -14,31 +14,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider(create: (_) => ImageGenProvider()),
       ],
-      child: Consumer<AppProvider>(
-        builder: (context, appProvider, child) {
-          return MaterialApp(
-            title: 'Math Bear CMS',
-            debugShowCheckedModeBanner: false,
-            themeMode: appProvider.themeMode,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
-                brightness: Brightness.light,
-              ),
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
-                brightness: Brightness.dark,
-              ),
-              useMaterial3: true,
-            ),
-            home: const HomeScreen(),
-          );
-        },
+      child: MaterialApp(
+        title: 'Math Bear CMS',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+        ),
+        home: const HomeScreen(),
       ),
     );
   }

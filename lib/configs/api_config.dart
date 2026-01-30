@@ -6,7 +6,5 @@ class ApiConfig {
   static const String baseUrl = 'http://localhost:8000';
 
   // Endpoints
-  static const String getMessagesEndpoint = '/api/messages/get-messages';
-  static const String markAsSeenEndpoint = '/api/messages/mark-as-seen';
-  static const String healthEndpoint = '/api/messages/health';
+  static const String genImageEndpoint = '/api/imagegen/generate-image';
 }
