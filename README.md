@@ -112,6 +112,21 @@ context.read<CounterProvider>().increment();
 - ✅ Cấu trúc thư mục chuẩn
 - ✅ FVM configuration
 
+## Chạy trên Web
+
+```bash
+# Chạy trên web (local)
+fvm flutter run -d chrome
+
+# Chạy và cho phép truy cập từ thiết bị khác trong cùng WiFi
+fvm flutter run -d chrome --web-hostname=0.0.0.0 --web-port=8080
+
+# Hoặc sử dụng script
+./run_web.sh
+```
+
+> 📱 **[Xem hướng dẫn chi tiết chạy web tại WEB_DEPLOY.md](WEB_DEPLOY.md)**
+
 ## Lệnh hữu ích
 
 ```bash
@@ -126,6 +141,9 @@ fvm flutter build apk
 
 # Build iOS
 fvm flutter build ios
+
+# Build Web
+fvm flutter build web --release
 
 # Analyze code
 fvm flutter analyze
