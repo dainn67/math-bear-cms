@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/counter_provider.dart';
 import 'providers/app_provider.dart';
 import 'screens/home_screen.dart';
 
@@ -16,7 +15,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()),
-        ChangeNotifierProvider(create: (_) => CounterProvider()),
       ],
       child: Consumer<AppProvider>(
         builder: (context, appProvider, child) {
