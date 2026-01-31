@@ -32,8 +32,12 @@ class ImageGenProvider with ChangeNotifier {
       if (response.success && response.data != null) {
         try {
           if (response.data is Map) {
-            imageGenResponse = ImageGenResponse.fromJson(response.data as Map<String, dynamic>);
-            _errorMessage = null;
+            if (response.data['images'] is List && (response.data['images'] as List).isNotEmpty) {
+              imageGenResponse = ImageGenResponse.fromJson(response.data as Map<String, dynamic>);
+              _errorMessage = null;
+            } else {
+              _errorMessage = '${ToastMessageConfig.noImagesFound}: ${response.data}';
+            }
           } else {
             _errorMessage = '${ToastMessageConfig.invalidDataFormat}: ${response.data}';
           }
