@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import '../configs/configs.dart';
 import '../services/api_service.dart';
-import '../configs/api_config.dart';
 
 class ImageGenProvider with ChangeNotifier {
   String? _imageBase64;
+  String? _text;
+  int _imageCount = 0;
   bool _isLoading = false;
   String? _errorMessage;
 
   String? get imageBase64 => _imageBase64;
+  String? get text => _text;
+  int get imageCount => _imageCount;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -30,6 +34,15 @@ class ImageGenProvider with ChangeNotifier {
 
       if (response.success && response.data != null) {
         if (response.data is Map && response.data.containsKey('images')) {
+          _text = response.data['text'];
+          _imageCount = response.data['image_count'];
+
+          if (_imageCount <= 0) {
+            _errorMessage = '${ToastMessageConfig.invalidDataFormat}: ${response.data}';
+            notifyListeners();
+            return;
+          }
+
           final images = response.data['images'];
           if (images is List && images.isNotEmpty) {
             final image = images[0];
@@ -37,19 +50,19 @@ class ImageGenProvider with ChangeNotifier {
               _imageBase64 = image['data'];
               _errorMessage = null;
             } else {
-              _errorMessage = 'Định dạng ảnh không đúng';
+              _errorMessage = '${ToastMessageConfig.invalidDataFormat}: ${response.data}';
             }
           } else {
-            _errorMessage = 'Không tìm thấy ảnh trong response';
+            _errorMessage = '${ToastMessageConfig.noDataFound}: ${response.data}';
           }
         } else {
-          _errorMessage = 'Định dạng response không đúng';
+          _errorMessage = '${ToastMessageConfig.invalidDataFormat}: ${response.data}';
         }
       } else {
-        _errorMessage = response.data?.toString() ?? 'Có lỗi xảy ra';
+        _errorMessage = '${ToastMessageConfig.unknownError}: ${response.data}';
       }
     } catch (e) {
-      _errorMessage = 'Lỗi: $e';
+      _errorMessage = '${ToastMessageConfig.unknownError}: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
