@@ -80,35 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
-                  // Error
-                  if (provider.errorMessage != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 64,
-                            color: Colors.red,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            provider.errorMessage!,
-                            style: const TextStyle(color: Colors.red),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              provider.clearImage();
-                            },
-                            child: const Text('Thử lại'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
                   // No image response yet
                   if (provider.imageGenResponse == null) {
                     return Center(
@@ -133,6 +104,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
+                  // Error
+                  if (provider.imageGenResponse!.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            provider.imageGenResponse!.text ?? 'Lỗi không xác định',
+                            style: const TextStyle(color: Colors.red),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              provider.clearImage();
+                            },
+                            child: const Text('Thử lại'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
                   // Display image
                   return Column(
                     children: [
@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.memory(
-                                  base64Decode(provider.imageGenResponse!.images[0]),
+                                  base64Decode(provider.imageGenResponse!.firstImage!),
                                   fit: BoxFit.contain,
                                 ),
                               ),

@@ -12,7 +12,7 @@ class ImageGenResponse {
 
   factory ImageGenResponse.fromJson(Map<String, dynamic> json) {
     final imagesList = <String>[];
-    
+
     if (json['images'] is List) {
       for (var item in json['images']) {
         if (item is Map && item.containsKey('data')) {
@@ -39,10 +39,13 @@ class ImageGenResponse {
     };
   }
 
-  /// Lấy image đầu tiên (nếu có)
+  factory ImageGenResponse.error(String error) {
+    return ImageGenResponse(images: [], text: null, imageCount: 0);
+  }
+
   String? get firstImage => images.isNotEmpty ? images[0] : null;
 
-  /// Kiểm tra có images không
   bool get hasImages => images.isNotEmpty;
-}
 
+  bool get hasError => imageCount == 0;
+}
