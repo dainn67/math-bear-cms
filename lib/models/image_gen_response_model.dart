@@ -40,7 +40,7 @@ class ImageGenResponse {
   }
 
   factory ImageGenResponse.error(String error) {
-    return ImageGenResponse(images: [], text: null, imageCount: 0);
+    return ImageGenResponse(images: [], text: error, imageCount: 0);
   }
 
   String? get firstImage => images.isNotEmpty ? images[0] : null;

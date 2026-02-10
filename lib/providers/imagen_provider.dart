@@ -6,6 +6,7 @@ class ImageGenProvider with ChangeNotifier {
   final ImageGenRepo _imageGenRepo;
 
   ImageGenResponse? imageGenResponse;
+  List<ImageQuestion> imageQuestions = [];
 
   bool _isLoading = false;
 
@@ -24,11 +25,31 @@ class ImageGenProvider with ChangeNotifier {
 
     final response = await _imageGenRepo.generateImage(prompt);
     if (response.hasError) {
+      _isLoading = false;
       notifyListeners();
       return;
     }
 
     imageGenResponse = response;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> generateImageQuestionsList() async {
+    _isLoading = true;
+    notifyListeners();
+
+    final response = await _imageGenRepo.getImageQuestionsList('Counting objects');
+    if (response.hasError) {
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    print(response.questions.length);
+    print(response.questions.map((e) => '${e.question} ${e.imageGenResponse.imageCount}').join('\n'));
+
+    imageQuestions = response.questions;
     _isLoading = false;
     notifyListeners();
   }
