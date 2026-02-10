@@ -25,9 +25,12 @@ class ImageGenRepo {
     }
   }
 
-  Future<ImageQuestionsList> getImageQuestionsList(String prompt) async {
+  Future<ImageQuestionsList> getImageQuestionsList(String prompt, {int numberOfImages = 5}) async {
     final response = await _apiService.post(ApiConfig.genImageQuestionsEndpoint, body: {
-      'inputs': {'prompt': prompt}
+      'inputs': {
+        'prompt': prompt,
+        'number_of_images': numberOfImages,
+      }
     });
 
     if (response.success && response.data != null) {

@@ -35,23 +35,23 @@ class ImageGenProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> generateImageQuestionsList() async {
+  Future<void> generateImageQuestionsList(String prompt, {int numberOfImages = 5}) async {
     _isLoading = true;
     notifyListeners();
 
-    final response = await _imageGenRepo.getImageQuestionsList('Counting objects');
-    if (response.hasError) {
+    try {
+      final response = await _imageGenRepo.getImageQuestionsList(prompt, numberOfImages: numberOfImages);
+      if (response.hasError) {
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      imageQuestions = response.questions;
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return;
     }
-
-    print(response.questions.length);
-    print(response.questions.map((e) => '${e.question} ${e.imageGenResponse.imageCount}').join('\n'));
-
-    imageQuestions = response.questions;
-    _isLoading = false;
-    notifyListeners();
   }
 
   void clearImage() {
