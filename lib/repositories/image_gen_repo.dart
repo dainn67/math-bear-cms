@@ -32,17 +32,20 @@ class ImageGenRepo {
 
     if (response.success && response.data != null) {
       try {
-        // The API returns a list of questions, each with question text and image_data.
-        // image_data contains the generated image and possibly text.
+        // The API returns a list: [{question: ..., image_data: {...}}]
         final List<dynamic> jsonList = response.data['message'];
 
-        print('xxx: ' +
-            jsonList
-                .map((e) => e.toString().substring(0, e.toString().length > 200 ? 200 : e.toString().length))
-                .join('\n'));
+        List<ImageQuestion> questions = jsonList.map((e) {
+          final map = e as Map<String, dynamic>;
+          final questionText = map['question'] as String? ?? '';
+          final imageData = map['image_data'] as Map<String, dynamic>? ?? {};
+          final imageGenResponse = ImageGenResponse.fromJson(imageData);
 
-        // Map to List<ImageQuestion> for the ImageQuestionsList
-        List<ImageQuestion> questions = jsonList.map((e) => ImageQuestion.fromJson(e as Map<String, dynamic>)).toList();
+          return ImageQuestion(
+            question: questionText,
+            imageGenResponse: imageGenResponse,
+          );
+        }).toList();
 
         return ImageQuestionsList(questions: questions);
       } catch (e) {
