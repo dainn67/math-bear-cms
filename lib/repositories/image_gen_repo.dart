@@ -29,7 +29,7 @@ class ImageGenRepo {
     final response = await _apiService.post(ApiConfig.genImageQuestionsEndpoint, body: {
       'inputs': {
         'prompt': prompt,
-        'number_of_images': numberOfImages,
+        'image_count': numberOfImages,
       }
     });
 
