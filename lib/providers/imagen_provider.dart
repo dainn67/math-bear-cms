@@ -9,8 +9,11 @@ class ImageGenProvider with ChangeNotifier {
   List<ImageQuestion> imageQuestions = [];
 
   bool _isLoading = false;
+  final Set<int> _regeneratingIndices = {};
 
   bool get isLoading => _isLoading;
+  
+  bool isRegenerating(int index) => _regeneratingIndices.contains(index);
 
   ImageGenProvider({ImageGenRepo? imageGenRepo}) : _imageGenRepo = imageGenRepo ?? ImageGenRepo();
 
@@ -23,7 +26,7 @@ class ImageGenProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final response = await _imageGenRepo.generateImage(prompt);
+    final response = await _imageGenRepo.regenerateImageQuestion(prompt);
     if (response.hasError) {
       _isLoading = false;
       notifyListeners();
@@ -50,6 +53,27 @@ class ImageGenProvider with ChangeNotifier {
       imageQuestions = response.questions;
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> regenerateImageQuestion(int index) async {
+    if (index < 0 || index >= imageQuestions.length) return;
+    
+    _regeneratingIndices.add(index);
+    notifyListeners();
+
+    try {
+      final question = imageQuestions[index].question;
+      final response = await _imageGenRepo.regenerateImageQuestion(question);
+      
+      if (!response.hasError) {
+        imageQuestions[index] = imageQuestions[index].copyWith(
+          imageGenResponse: response,
+        );
+      }
+    } finally {
+      _regeneratingIndices.remove(index);
       notifyListeners();
     }
   }

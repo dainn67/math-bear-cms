@@ -7,20 +7,22 @@ import '../configs/configs.dart';
 class ImageGenRepo {
   final ApiService _apiService = ApiService();
 
-  Future<ImageGenResponse> generateImage(String prompt) async {
-    final response = await _apiService.post(ApiConfig.genImageEndpoint, body: {'prompt': prompt, 'provider': 'gemini'});
+  Future<ImageGenResponse> regenerateImageQuestion(String question) async {
+    final response = await _apiService.post(ApiConfig.regenImageQuestionEndpoint, body: {
+      'inputs': {'question': question, 'provider': 'gemini'}
+    });
 
     if (response.success && response.data != null) {
       try {
-        return ImageGenResponse.fromJson(response.data as Map<String, dynamic>);
+        return ImageGenResponse.fromJson(response.data['message'] as Map<String, dynamic>);
       } catch (e) {
-        debugPrint('(generateImage parse error): $e');
+        debugPrint('(regenerateImageQuestion parse error): $e');
         return ImageGenResponse.error(e.toString());
       }
     } else {
       final statusCode = response.statusCode;
       final body = response.data;
-      debugPrint('(generateImage error) statusCode: $statusCode, body: $body');
+      debugPrint('(regenerateImageQuestion error) statusCode: $statusCode, body: $body');
       return ImageGenResponse.error('$statusCode: $body');
     }
   }

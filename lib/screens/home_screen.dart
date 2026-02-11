@@ -326,6 +326,8 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) => _QuestionCard(
         question: provider.imageQuestions[index],
         index: index,
+        isRegenerating: provider.isRegenerating(index),
+        onRegenerate: () => provider.regenerateImageQuestion(index),
       ),
     );
   }
@@ -334,10 +336,14 @@ class _HomeScreenState extends State<HomeScreen> {
 class _QuestionCard extends StatelessWidget {
   final ImageQuestion question;
   final int index;
+  final bool isRegenerating;
+  final VoidCallback onRegenerate;
 
   const _QuestionCard({
     required this.question,
     required this.index,
+    required this.isRegenerating,
+    required this.onRegenerate,
   });
 
   @override
@@ -373,21 +379,74 @@ class _QuestionCard extends StatelessWidget {
           color: Color(0xFFF7FAFC),
           borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-          child: question.imageGenResponse.hasImages
-              ? Image.memory(
-                  base64Decode(question.imageGenResponse.firstImage!),
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                )
-              : const Center(
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    size: 48,
-                    color: Color(0xFFCBD5E0),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              child: question.imageGenResponse.hasImages
+                  ? Image.memory(
+                      base64Decode(question.imageGenResponse.firstImage!),
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    )
+                  : const Center(
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 48,
+                        color: Color(0xFFCBD5E0),
+                      ),
+                    ),
+            ),
+            if (isRegenerating)
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3,
                   ),
                 ),
+              ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: _buildRegenerateButton(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegenerateButton() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isRegenerating ? null : onRegenerate,
+          borderRadius: BorderRadius.circular(6),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Icon(
+              Icons.refresh,
+              size: 20,
+              color: isRegenerating ? const Color(0xFFCBD5E0) : const Color(0xFF4299E1),
+            ),
+          ),
         ),
       ),
     );
